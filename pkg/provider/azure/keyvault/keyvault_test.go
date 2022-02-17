@@ -30,7 +30,6 @@ import (
 	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	v1 "github.com/external-secrets/external-secrets/apis/meta/v1"
 	fake "github.com/external-secrets/external-secrets/pkg/provider/azure/keyvault/fake"
-	"github.com/external-secrets/external-secrets/pkg/provider/schema"
 	utils "github.com/external-secrets/external-secrets/pkg/utils"
 )
 
@@ -99,7 +98,7 @@ func TestNewClientManagedIdentityNoNeedForCredentials(t *testing.T) {
 		}}},
 	}
 
-	provider, err := schema.GetProvider(&store)
+	provider, err := esv1beta1.GetProvider(&store)
 	tassert.Nil(t, err, "the return err should be nil")
 	k8sClient := clientfake.NewClientBuilder().Build()
 	secretClient, err := provider.NewClient(context.Background(), &store, k8sClient, namespace)
@@ -127,7 +126,7 @@ func TestNewClientNoCreds(t *testing.T) {
 			TenantID: &tenantID,
 		}}},
 	}
-	provider, err := schema.GetProvider(&store)
+	provider, err := esv1beta1.GetProvider(&store)
 	tassert.Nil(t, err, "the return err should be nil")
 	k8sClient := clientfake.NewClientBuilder().Build()
 	_, err = provider.NewClient(context.Background(), &store, k8sClient, namespace)

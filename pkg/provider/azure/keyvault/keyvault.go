@@ -30,8 +30,6 @@ import (
 
 	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	smmeta "github.com/external-secrets/external-secrets/apis/meta/v1"
-	"github.com/external-secrets/external-secrets/pkg/provider"
-	"github.com/external-secrets/external-secrets/pkg/provider/schema"
 )
 
 const (
@@ -71,17 +69,17 @@ type Azure struct {
 }
 
 func init() {
-	schema.Register(&Azure{}, &esv1beta1.SecretStoreProvider{
+	esv1beta1.Register(&Azure{}, &esv1beta1.SecretStoreProvider{
 		AzureKV: &esv1beta1.AzureKVProvider{},
 	})
 }
 
 // NewClient constructs a new secrets client based on the provided store.
-func (a *Azure) NewClient(ctx context.Context, store esv1beta1.GenericStore, kube client.Client, namespace string) (provider.SecretsClient, error) {
+func (a *Azure) NewClient(ctx context.Context, store esv1beta1.GenericStore, kube client.Client, namespace string) (esv1beta1.SecretsClient, error) {
 	return newClient(ctx, store, kube, namespace)
 }
 
-func newClient(ctx context.Context, store esv1beta1.GenericStore, kube client.Client, namespace string) (provider.SecretsClient, error) {
+func newClient(ctx context.Context, store esv1beta1.GenericStore, kube client.Client, namespace string) (esv1beta1.SecretsClient, error) {
 	provider, err := getProvider(store)
 	if err != nil {
 		return nil, err
@@ -113,6 +111,10 @@ func getProvider(store esv1beta1.GenericStore) (*esv1beta1.AzureKVProvider, erro
 	}
 
 	return spc.Provider.AzureKV, nil
+}
+
+func (a *Azure) ValidateStore(store esv1beta1.GenericStore) error {
+	return nil
 }
 
 // Empty GetAllSecrets.
